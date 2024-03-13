@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>MandelViewer</title>
+    <link rel="stylesheet" href="./assets/style.css" charset="utf8">
+    <link rel="shortcut icon" href="assets/favicon.ico">
+</head>
+
+<body>
+    <table class="center">
+        <tr>
+            <td colspan="2">
+                <h1>MandelViewer</h1>
+            </td>
+        </tr>
+        <tr>
+            <td><canvas id="mandelCanvas" class="image"></canvas></td>
+            <td><canvas id="juliaCanvas" class="image"></canvas></td>
+        </tr>
+        <tr>
+            <td style="padding-top: 10px; text-align: center;">
+                (<span id="mandelX">0.0000000000000000</span>,
+                <span id="mandelY">0.0000000000000000</span>)
+            </td>
+            <td style="padding-top: 10px; text-align: center;">
+                (<span id="juliaX">0.0000000000000000</span>,
+                <span id="juliaY">0.0000000000000000</span>)
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-top: 10px; position: relative;" colspan="2">
+                <table style="position: absolute; table-layout: fixed; width:100%; text-align: center;">
+                    <tr>
+                        <td> Z -> Zoom In</td>
+                        <td> X -> Zoom Out</td>
+                        <td> C -> Pick Point</td>
+                        <td> R -> Reset View</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <script src="./js/lib.js"></script>
+</body>
+</html>
