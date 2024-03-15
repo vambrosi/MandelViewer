@@ -16,6 +16,7 @@ const mandelCanvas = $id("mandelCanvas");
 const juliaCanvas = $id("juliaCanvas");
 
 let juliaC = [0.0, 0.0];
+let orbitStart = [0.0, 0.0];
 
 // ------------------------------------------------------------------------------------- //
 // Plots
@@ -119,14 +120,16 @@ class View {
         this.ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
         this.ctx.putImageData(this.img, corner[0], corner[1]);
 
-        if (!this.isMandel) { return };
+        if (this.isMandel) {
+            const circle = new Path2D();
+            const c = addVector(corner, this.complexToCanvas(juliaC));
+            circle.arc(c[0], c[1], 4, 0, 2 * Math.PI);
 
-        const circle = new Path2D();
-        const c = addVector(corner, this.complexToCanvas(juliaC));
-        circle.arc(c[0], c[1], 4, 0, 2 * Math.PI);
-
-        this.ctx.fillStyle = "red";
-        this.ctx.fill(circle);
+            this.ctx.fillStyle = "red";
+            this.ctx.fill(circle);
+        } else {
+            plotArray(this, corner, iterate(orbitStart, 10));
+        };
     }
 
     // Coordinate changes
@@ -180,12 +183,6 @@ const juliaView = new View($id("juliaCanvas"), [0.0, 0.0], 4.0, false, $id("juli
 document.addEventListener("mouseup", dragHandler, false);
 document.addEventListener("keydown", keyHandler, false);
 
-// mandelView.canvas.addEventListener("click", (e) => {
-//     juliaC = mandelView.canvasToComplex(eventClampedPos(e));
-//     mandelView.redraw([0, 0]);
-//     juliaView.update();
-// }, false);
-
 mandelView.initialize();
 juliaView.initialize();
 
@@ -220,10 +217,15 @@ function dragHandler(event) {
 }
 
 function keyHandler(event) {
-    if (event.key == "c" && mandelView.pointerOn) {
-        juliaC = mandelView.pointerComplex;
-        juliaView.update();
-        mandelView.redraw();
+    if (event.key == "c") {
+        if (mandelView.pointerOn) {
+            juliaC = mandelView.pointerComplex;
+            juliaView.update();
+            mandelView.redraw();
+        } else if (juliaView.pointerOn) {
+            orbitStart = juliaView.pointerComplex;
+            juliaView.redraw();
+        }
     }
 
     const view = mandelView.pointerOn ? mandelView : juliaView.pointerOn ? juliaView : null;
@@ -269,4 +271,52 @@ function distance(v1, v2) {
 
 function midpoint(v1, v2) {
     return multVector(0.5, addVector(v1, v2))
+}
+
+// ------------------------------------------------------------------------------------- //
+// Auxiliary Functions
+// ------------------------------------------------------------------------------------- //
+
+function iterate(z, iterates) {
+    orbit = [z]
+
+    let x = z[0];
+    let y = z[1];
+
+    let x2 = x * x;
+    let y2 = y * y;
+
+    for (let i = 0; i < iterates; i++) {
+        y = 2 * x * y + juliaC[1];
+        x = x2 - y2 + juliaC[0];
+
+        orbit.push([x, y]);
+        x2 = x * x;
+        y2 = y * y;
+    }
+    return orbit
+}
+
+function plotArray(view, corner, zs) {
+    view.ctx.strokeStyle = "red";
+    view.ctx.fillStyle = "red";
+    view.ctx.beginPath();
+
+    let zCanvas = addVector(corner, view.complexToCanvas(zs[0]));
+    view.ctx.moveTo(zCanvas[0], zCanvas[1]);
+
+    let circle = new Path2D();
+    circle.arc(zCanvas[0], zCanvas[1], 5, 0, 2 * Math.PI);
+    view.ctx.fill(circle);
+
+    for (let i = 1; i < zs.length; i++) {
+        zCanvas = addVector(corner, view.complexToCanvas(zs[i]));
+        view.ctx.lineTo(zCanvas[0], zCanvas[1]);
+
+        circle = new Path2D();
+        circle.arc(zCanvas[0], zCanvas[1], 5, 0, 2 * Math.PI);
+        view.ctx.fill(circle);
+    }
+
+    view.ctx.stroke();
 }
