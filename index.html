@@ -20,23 +20,27 @@
             <td><canvas id="juliaCanvas" class="image"></canvas></td>
         </tr>
         <tr>
-            <td style="padding-top: 10px; text-align: center;">
+            <td>
                 (<span id="mandelX">0.0000000000000000</span>,
                 <span id="mandelY">0.0000000000000000</span>)
             </td>
-            <td style="padding-top: 10px; text-align: center;">
+            <td>
                 (<span id="juliaX">0.0000000000000000</span>,
                 <span id="juliaY">0.0000000000000000</span>)
             </td>
         </tr>
         <tr>
-            <td style="padding-top: 10px; position: relative;" colspan="2">
-                <table style="position: absolute; table-layout: fixed; width:100%; text-align: center;">
+            <td style="position: relative;" colspan="2">
+                <table style="position: absolute; table-layout: fixed; width:100%;">
                     <tr>
                         <td> Z -> Zoom In</td>
                         <td> X -> Zoom Out</td>
                         <td> C -> Pick Point</td>
                         <td> R -> Reset View</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"> (↑ or ↓) -> Change Orbit Length of <span style="color: red">•</span></td>
+                        <td colspan="2"> ⇧ + (↑ or ↓) -> Change Maximum Iterations</td>
                     </tr>
                 </table>
             </td>

@@ -10,13 +10,14 @@ const CANVAS_SIZE = 500;
 
 const MAX_PPU = 1e16;
 const MIN_PPU = CANVAS_SIZE / 4;
-const MAX_ITERS = 500;
+let MAX_ITERS = 100;
 
 const mandelCanvas = $id("mandelCanvas");
 const juliaCanvas = $id("juliaCanvas");
 
 let juliaC = [0.0, 0.0];
 let orbitStart = [0.0, 0.0];
+let orbitLength = 8;
 
 // ------------------------------------------------------------------------------------- //
 // Plots
@@ -128,7 +129,7 @@ class View {
             this.ctx.fillStyle = "red";
             this.ctx.fill(circle);
         } else {
-            plotArray(this, corner, iterate(orbitStart, 10));
+            plotArray(this, corner, iterate(orbitStart, orbitLength - 1));
         };
     }
 
@@ -217,15 +218,37 @@ function dragHandler(event) {
 }
 
 function keyHandler(event) {
-    if (event.key == "c") {
-        if (mandelView.pointerOn) {
-            juliaC = mandelView.pointerComplex;
-            juliaView.update();
-            mandelView.redraw();
-        } else if (juliaView.pointerOn) {
-            orbitStart = juliaView.pointerComplex;
-            juliaView.redraw();
-        }
+    switch (event.key) {
+        case "c":
+            if (mandelView.pointerOn) {
+                juliaC = mandelView.pointerComplex;
+                juliaView.update();
+                mandelView.redraw();
+            } else if (juliaView.pointerOn) {
+                orbitStart = juliaView.pointerComplex;
+                juliaView.redraw();
+            }
+            break;
+        case "ArrowUp":
+            if (event.shiftKey) {
+                MAX_ITERS += 100;
+                mandelView.update();
+                juliaView.update();
+            } else {
+                orbitLength += 1;
+                juliaView.redraw();
+            }
+            break;
+        case "ArrowDown":
+            if (event.shiftKey) {
+                MAX_ITERS = MAX_ITERS < 200 ? 100 : MAX_ITERS - 100;
+                mandelView.update();
+                juliaView.update();
+            } else {
+                orbitLength = orbitLength <= 2 ? 1 : orbitLength - 1;
+                juliaView.redraw();
+            }
+            break;
     }
 
     const view = mandelView.pointerOn ? mandelView : juliaView.pointerOn ? juliaView : null;

@@ -25,3 +25,8 @@ table.perf {
   width: 12em;
   table-layout: fixed;
 }
+
+td {
+  padding-top: 10px;
+  text-align: center;
+}
