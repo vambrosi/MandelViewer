@@ -124,7 +124,7 @@ class View {
         e.preventDefault();
 
         this.scale += e.deltaY * -0.01;
-        this.scale = Math.min(Math.max(0.01, this.scale), 100);
+        this.scale = Math.min(Math.max(0.02, this.scale), 50);
         this.ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
         this.ctx.translate(this.pointerCanvas[0], this.pointerCanvas[1]);
         this.ctx.scale(this.scale, this.scale);
@@ -142,7 +142,7 @@ class View {
 
           this.update();
           this.scale = 1;
-        }, 50);
+        }, 100);
       },
       false
     );
@@ -364,15 +364,6 @@ function keyHandler(event) {
   if (event.key == "r") {
     view.center = [...view.init_center];
     view.ppu = view.init_ppu;
-    view.update();
-  } else if (event.key == "z") {
-    view.center = midpoint(view.center, view.pointerComplex);
-    view.ppu *= 2.0;
-    view.ppu = view.ppu > MAX_PPU ? MAX_PPU : view.ppu;
-    view.update();
-  } else if (event.key == "x") {
-    view.center = subVector(multVector(2, view.center), view.pointerComplex);
-    view.ppu /= 2.0;
     view.update();
   }
 }
