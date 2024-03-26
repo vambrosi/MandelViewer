@@ -52,7 +52,7 @@
       (result f64)
 
     local.get $iter
-    i32.const 2
+    i32.const 1
     i32.add
     f64.convert_i32_u
     local.get $abs2z
@@ -61,6 +61,8 @@
     f64.div
     call $log2
     f64.sub
+    f64.const 0
+    f64.max
   )
 
   (func $to_index
