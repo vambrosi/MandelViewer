@@ -10,9 +10,7 @@ const WASM_PAGE_SIZE = 1024 * 64;
 const PALETTE_PAGES = 2;
 const CANVAS_SIZE = 500;
 
-const MAX_PPU = 1e16;
-const MIN_PPU = CANVAS_SIZE / 4;
-let MAX_ITERS = 100;
+let maxIters = 100;
 
 const mandelCanvas = $id("mandelCanvas");
 const juliaCanvas = $id("juliaCanvas");
@@ -167,7 +165,7 @@ class View {
         this.center[0],
         this.center[1],
         this.ppu,
-        MAX_ITERS,
+        maxIters
       );
     } else {
       this.wasmObj.instance.exports.julia_plot(
@@ -176,9 +174,9 @@ class View {
         this.center[0],
         this.center[1],
         this.ppu,
-        MAX_ITERS,
+        maxIters,
         juliaC[0],
-        juliaC[1],
+        juliaC[1]
       );
     }
     this.img.data.set(this.wasmMem8.slice(0, this.img.data.length));
@@ -331,24 +329,16 @@ function keyHandler(event) {
       }
       break;
     case "ArrowUp":
-      if (event.shiftKey) {
-        MAX_ITERS += 100;
-        mandelView.update();
-        juliaView.update();
-      } else {
-        orbitLength += 1;
-        juliaView.redraw();
-      }
+      orbitLengthInput.blur();
+      orbitLength = orbitLength > 1000 ? 1000 : orbitLength + 1;
+      orbitLengthInput.value = orbitLength;
+      juliaView.redraw();
       break;
     case "ArrowDown":
-      if (event.shiftKey) {
-        MAX_ITERS = MAX_ITERS < 200 ? 100 : MAX_ITERS - 100;
-        mandelView.update();
-        juliaView.update();
-      } else {
-        orbitLength = orbitLength <= 2 ? 1 : orbitLength - 1;
-        juliaView.redraw();
-      }
+      orbitLengthInput.blur();
+      orbitLength = orbitLength <= 2 ? 1 : orbitLength - 1;
+      orbitLengthInput.value = orbitLength;
+      juliaView.redraw();
       break;
   }
 
@@ -360,11 +350,22 @@ function keyHandler(event) {
   if (!view) {
     return;
   }
+  orbitLengthInput.blur();
+  maxItersInput.blur();
 
   if (event.key == "r") {
     view.center = [...view.init_center];
     view.ppu = view.init_ppu;
     view.update();
+  }
+
+  if (
+    event.key == "r" ||
+    event.key == "c" ||
+    event.key == "ArrowUp" ||
+    event.key == "ArrowDown"
+  ) {
+    event.preventDefault();
   }
 }
 
@@ -438,4 +439,67 @@ function plotArray(view, zs) {
   }
 
   view.bufferCtx.stroke();
+}
+
+// ------------------------------------------------------------------------------------- //
+// Menu Functions
+// ------------------------------------------------------------------------------------- //
+
+const menu = document.querySelector(".menu");
+const menuItems = document.querySelectorAll(".menuItem");
+const hamburger = document.querySelector(".hamburger");
+const closeIcon = document.querySelector(".closeIcon");
+const menuIcon = document.querySelector(".menuIcon");
+
+function toggleMenu() {
+  if (menu.classList.contains("showMenu")) {
+    menu.classList.remove("showMenu");
+    closeIcon.style.display = "none";
+    menuIcon.style.display = "block";
+  } else {
+    menu.classList.add("showMenu");
+    closeIcon.style.display = "block";
+    menuIcon.style.display = "none";
+  }
+}
+
+hamburger.addEventListener("click", toggleMenu);
+
+const orbitLengthInput = $id("orbitLength");
+const maxItersInput = $id("maxIters");
+
+orbitLengthInput.value = orbitLength;
+maxItersInput.value = maxIters;
+
+orbitLengthInput.addEventListener("input", updateOrbitLength);
+orbitLengthInput.addEventListener("keydown", updateOrbitLength);
+maxItersInput.addEventListener("input", updateMaxIters);
+maxItersInput.addEventListener("keydown", updateMaxIters);
+
+let isTyping = false;
+
+function updateMaxIters(event) {
+  maxIters = Number.parseInt(maxItersInput.value);
+
+  window.clearTimeout(isTyping);
+
+  isTyping = setTimeout(() => {
+    mandelView.update();
+    juliaView.update();
+
+    if (event.key == "Enter") {
+      focus(mandelCanvas);
+      toggleMenu();
+    }
+  }, 200);
+}
+
+function updateOrbitLength(event) {
+  orbitLength = Number.parseInt(orbitLengthInput.value);
+  juliaView.redraw();
+
+  if (event.key == "Enter") {
+    focus(mandelCanvas);
+    toggleMenu();
+  }
 }
