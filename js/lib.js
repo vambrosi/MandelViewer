@@ -317,6 +317,15 @@ function dragHandler(event) {
 }
 
 function keyHandler(event) {
+  if (
+    event.key == "r" ||
+    event.key == "c" ||
+    event.key == "ArrowUp" ||
+    event.key == "ArrowDown"
+  ) {
+    event.preventDefault();
+  }
+  
   switch (event.key) {
     case "c":
       if (mandelView.pointerOn) {
@@ -357,15 +366,6 @@ function keyHandler(event) {
     view.center = [...view.init_center];
     view.ppu = view.init_ppu;
     view.update();
-  }
-
-  if (
-    event.key == "r" ||
-    event.key == "c" ||
-    event.key == "ArrowUp" ||
-    event.key == "ArrowDown"
-  ) {
-    event.preventDefault();
   }
 }
 
