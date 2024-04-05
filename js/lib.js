@@ -325,7 +325,7 @@ function keyHandler(event) {
   ) {
     event.preventDefault();
   }
-  
+
   switch (event.key) {
     case "c":
       if (mandelView.pointerOn) {
