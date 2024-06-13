@@ -11,14 +11,15 @@
 
 .menuTitle {
   display: block;
-  margin: 3rem 0rem 2rem 0rem;
+  margin: 3rem 2rem 2rem 0rem;
   font-size: 1.5rem;
   color: white;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .menuItem {
-  display: block;
+  display: none;
   margin: 2rem 2rem 2rem 1rem;
   font-size: 1rem;
   color: white;
@@ -28,6 +29,18 @@
 .shortcut {
   float: right;
   text-align: right;
+}
+
+.toggleButton {
+  float: right;
+  text-align: right;
+  top: 1rem;
+  left: 1rem;
+  padding: 4px;
+}
+
+.long {
+  width: 150px;
 }
 
 .hamburger {
@@ -65,6 +78,10 @@
 
 .showMenu {
   transform: translateX(0);
+}
+
+.expandMenu .menuItem {
+  animation: fade-in 1s;
 }
 
 input[type="number"] {

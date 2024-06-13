@@ -19,6 +19,21 @@ let juliaC = [0.0, 0.0];
 let orbitStart = [0.0, 0.0];
 let orbitLength = 8;
 
+const orbitLengthInput = $id("orbitLength");
+const maxItersInput = $id("maxIters");
+
+const mandelParamInputs = {
+  x: $id("mandelCenterX"),
+  y: $id("mandelCenterY"),
+  diam: $id("mandelDiam"),
+}
+
+const juliaParamInputs = {
+  x: $id("juliaCenterX"),
+  y: $id("juliaCenterY"),
+  diam: $id("juliaDiam"),
+}
+
 // ------------------------------------------------------------------------------------- //
 // Plots
 // ------------------------------------------------------------------------------------- //
@@ -144,6 +159,7 @@ class View {
       },
       false
     );
+    this.canvas.addEventListener("click", cancelCloseMenu);
   }
 
   // Plotting functions
@@ -157,7 +173,7 @@ class View {
     this.update();
   }
 
-  update() {
+  update(updateParams=true) {
     if (this.isMandel) {
       this.wasmObj.instance.exports.mandel_plot(
         CANVAS_SIZE,
@@ -167,6 +183,12 @@ class View {
         this.ppu,
         maxIters
       );
+      if (updateParams) {
+        mandelParamInputs.x.value = this.center[0];
+        mandelParamInputs.y.value = this.center[1];
+        mandelParamInputs.diam.value = CANVAS_SIZE / this.ppu;
+      }
+
     } else {
       this.wasmObj.instance.exports.julia_plot(
         CANVAS_SIZE,
@@ -178,6 +200,11 @@ class View {
         juliaC[0],
         juliaC[1]
       );
+      if (updateParams) {
+        juliaParamInputs.x.value = this.center[0];
+        juliaParamInputs.y.value = this.center[1];
+        juliaParamInputs.diam.value = CANVAS_SIZE / this.ppu;
+      }
     }
     this.img.data.set(this.wasmMem8.slice(0, this.img.data.length));
     this.redraw();
@@ -446,12 +473,12 @@ function plotArray(view, zs) {
 // ------------------------------------------------------------------------------------- //
 
 const menu = document.querySelector(".menu");
-const menuItems = document.querySelectorAll(".menuItem");
 const hamburger = document.querySelector(".hamburger");
 const closeIcon = document.querySelector(".closeIcon");
 const menuIcon = document.querySelector(".menuIcon");
+const collapsibleMenus = document.querySelectorAll(".collapsibleMenu");
 
-function toggleMenu() {
+function toggleMenu(event) {
   if (menu.classList.contains("showMenu")) {
     menu.classList.remove("showMenu");
     closeIcon.style.display = "none";
@@ -461,12 +488,50 @@ function toggleMenu() {
     closeIcon.style.display = "block";
     menuIcon.style.display = "none";
   }
+  event.stopPropagation();
+}
+
+function fadeOptions(menuDiv) {
+  return event => {
+    const menuItems = menuDiv.querySelectorAll(".menuItem");
+    const toggleButton = menuDiv.querySelector(".toggleButton");
+
+    if (menuDiv.classList.contains("expandMenu")) {
+      menuDiv.classList.remove("expandMenu");
+      for (let item of menuItems) {
+        item.style.display = "none";
+        toggleButton.innerHTML = "arrow_drop_down";
+      }
+    } else {
+      menuDiv.classList.add("expandMenu");
+      for (let item of menuItems) {
+        item.style.display = "block";
+        toggleButton.innerHTML = "arrow_drop_up";
+      }
+    }
+  }
+}
+
+function closeMenu() {
+  if (menu.classList.contains("showMenu")) {
+    menu.classList.remove("showMenu");
+    closeIcon.style.display = "none";
+    menuIcon.style.display = "block";
+  }
+}
+
+function cancelCloseMenu(event) {
+  event.stopPropagation();
 }
 
 hamburger.addEventListener("click", toggleMenu);
+for (let menu of collapsibleMenus) {
+  let menuTitle = menu.querySelector(".menuTitle")
+  menuTitle.addEventListener("click", fadeOptions(menu))
+}
 
-const orbitLengthInput = $id("orbitLength");
-const maxItersInput = $id("maxIters");
+document.addEventListener("click", closeMenu)
+menu.addEventListener("click", cancelCloseMenu)
 
 orbitLengthInput.value = orbitLength;
 maxItersInput.value = maxIters;
@@ -475,6 +540,15 @@ orbitLengthInput.addEventListener("input", updateOrbitLength);
 orbitLengthInput.addEventListener("keydown", updateOrbitLength);
 maxItersInput.addEventListener("input", updateMaxIters);
 maxItersInput.addEventListener("keydown", updateMaxIters);
+
+for (const parameterInput of Object.values(mandelParamInputs)) {
+  parameterInput.addEventListener("input", updateViewParameters(mandelView, mandelParamInputs));
+  parameterInput.addEventListener("keydown", updateViewParameters(mandelView, mandelParamInputs));
+}
+for (const parameterInput of Object.values(juliaParamInputs)) {
+  parameterInput.addEventListener("input", updateViewParameters(juliaView, juliaParamInputs));
+  parameterInput.addEventListener("keydown", updateViewParameters(juliaView, juliaParamInputs));
+}
 
 let isTyping = false;
 
@@ -489,7 +563,7 @@ function updateMaxIters(event) {
 
     if (event.key == "Enter") {
       focus(mandelCanvas);
-      toggleMenu();
+      toggleMenu(event);
     }
   }, 200);
 }
@@ -500,6 +574,37 @@ function updateOrbitLength(event) {
 
   if (event.key == "Enter") {
     focus(mandelCanvas);
-    toggleMenu();
+    toggleMenu(event);
+  }
+}
+
+function updateViewParameters(view, params) {
+  return (event) => {
+    if (!params.x.checkValidity()
+      || !params.y.checkValidity()
+      || !params.diam.checkValidity()
+      || (params.diam.value <= 0)
+    ) {
+      return;
+    }
+    console.log(params.x.value, params.y.value, params.diam.value);
+
+    view.center = [
+      Number.parseFloat(params.x.value),
+      Number.parseFloat(params.y.value)
+    ];
+    view.ppu = CANVAS_SIZE / Number.parseFloat(params.diam.value);
+
+    window.clearTimeout(isTyping);
+
+    isTyping = setTimeout(() => {
+      view.update(false);
+      console.log(view.diameter);
+
+      if (event.key == "Enter") {
+        focus(view);
+        toggleMenu(event);
+      }
+    }, 200);
   }
 }

@@ -14,46 +14,110 @@
   <body>
     <!-- Menu -->
     <ul class="menu">
-      <li class="menuTitle">Shortcuts</li>
-      <li class="menuItem">
-        Pick Point
-        <span class="shortcut"> C</span>
-      </li>
-      <li class="menuItem">
-        Reset View
-        <span class="shortcut"> R</span>
-      </li>
-      <li class="menuItem">
-        Orbit Length
-        <span class="shortcut">↑ or ↓</span>
-      </li>
-      <li class="menuTitle">Parameters</li>
-      <li class="menuItem">
-        Orbit Length
-        <div class="shortcut">
-          <input
-            id="orbitLength"
-            type="number"
-            min="1"
-            max="1000"
-            placeholder="1-1000"
-          />
-          <span></span>
-        </div>
-      </li>
-      <li class="menuItem">
-        Max Iterations
-        <div class="shortcut">
-          <input
-            id="maxIters"
-            type="number"
-            min="100"
-            max="2000"
-            placeholder="100-2000"
-          />
-          <span></span>
-        </div>
-      </li>
+      <div class="collapsibleMenu">
+        <li class="menuTitle">
+          Shortcuts
+          <div class="toggleButton material-icons"> arrow_drop_down </div>
+        </li>
+        <li class="menuItem">
+          Pick Point
+          <span class="shortcut"> C</span>
+        </li>
+        <li class="menuItem">
+          Reset View
+          <span class="shortcut"> R</span>
+        </li>
+        <li class="menuItem">
+          Orbit Length
+          <span class="shortcut">↑ or ↓</span>
+        </li>
+      </div>
+      <div class="collapsibleMenu">
+        <li class="menuTitle">
+          Parameters
+          <div class="toggleButton material-icons"> arrow_drop_down </div>
+        </li>
+        <li class="menuItem">
+          Orbit Length
+          <div class="shortcut">
+            <input
+              id="orbitLength"
+              type="number"
+              min="1"
+              max="1000"
+              placeholder="1-1000"
+            />
+            <span></span>
+          </div>
+        </li>
+        <li class="menuItem">
+          Max Iterations
+          <div class="shortcut">
+            <input
+              id="maxIters"
+              type="number"
+              min="100"
+              max="2000"
+              placeholder="100-2000"
+            />
+            <span></span>
+          </div>
+        </li>
+      </div>
+      <div class="collapsibleMenu mandelMenu">
+        <li class="menuTitle">
+          Mandelbrot
+          <div class="toggleButton material-icons"> arrow_drop_down </div>
+        </li>
+        <li class="menuItem">
+          Center x
+          <div class="shortcut">
+            <input id="mandelCenterX" class="long" type="text" inputmode="numeric" pattern="^[+\-]?(?=\.\d|\d)(?:0|[1-9]\d*)?(?:\.\d*)?(?:\d[eE][+\-]?\d+)?$" required/>
+            <span></span>
+          </div>
+        </li>
+        <li class="menuItem">
+          Center y
+          <div class="shortcut">
+            <input id="mandelCenterY" class="long" type="text" inputmode="numeric" pattern="^[+\-]?(?=\.\d|\d)(?:0|[1-9]\d*)?(?:\.\d*)?(?:\d[eE][+\-]?\d+)?$" required/>
+            <span></span>
+          </div>
+        </li>
+        <li class="menuItem">
+          Diameter
+          <div class="shortcut">
+            <input id="mandelDiam" class="long" type="text" inputmode="numeric" pattern="^[+]?(?=\.\d|\d)(?:0|[1-9]\d*)?(?:\.\d*)?(?:\d[eE][+\-]?\d+)?$" required/>
+            <span></span>
+          </div>
+        </li>
+      </div>
+      <div class="collapsibleMenu juliaMenu">
+        <li class="menuTitle">
+          Julia
+          <div class="toggleButton material-icons"> arrow_drop_down </div>
+        </li>
+        <li class="menuItem">
+          Center x
+          <div class="shortcut">
+            <input id="juliaCenterX" class="long" type="text" inputmode="numeric" pattern="^[+\-]?(?=\.\d|\d)(?:0|[1-9]\d*)?(?:\.\d*)?(?:\d[eE][+\-]?\d+)?$" required/>
+            <span></span>
+          </div>
+        </li>
+        <li class="menuItem">
+          Center y
+          <div class="shortcut">
+            <input id="juliaCenterY" class="long" type="text" inputmode="numeric" pattern="^[+\-]?(?=\.\d|\d)(?:0|[1-9]\d*)?(?:\.\d*)?(?:\d[eE][+\-]?\d+)?$" required/>
+            <span></span>
+          </div>
+        </li>
+        <li class="menuItem">
+          Diameter
+          <div class="shortcut">
+            <input id="juliaDiam" class="long" type="text" inputmode="numeric" pattern="^[+]?(?=\.\d|\d)(?:0|[1-9]\d*)?(?:\.\d*)?(?:\d[eE][+\-]?\d+)?$" required/>
+            <span></span>
+          </div>
+        </li>
+      </div>
     </ul>
 
     <button class="hamburger">
